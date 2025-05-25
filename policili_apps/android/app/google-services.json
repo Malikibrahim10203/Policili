@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "526192892058",
+    "project_id": "policili",
+    "storage_bucket": "policili.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:526192892058:android:47eddbba5fa8d096df2723",
+        "android_client_info": {
+          "package_name": "com.example.policili_apps"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBg594J-ap3pRaoZS9w19QjesV0q0jZrbc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
