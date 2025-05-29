@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
 import 'package:policili_apps/controller/auth_controller.dart';
+import 'package:policili_apps/generate_page.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -19,7 +20,7 @@ class HomePage extends StatelessWidget {
           Color(0xffFFE4D0),
           Color(0xffFDE6E7),
           Color(0xffFFE4ff),
-          Color(0xffE6C7FE),
+          Color(0xffFCD8DA),
         ],
         options: AnimatedMeshGradientOptions(
           speed: 0.05,
@@ -95,7 +96,9 @@ class HomePage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10.w)
                     ),
                   ),
-                  onPressed: (){},
+                  onPressed: (){
+                    Get.to(GeneratePage());
+                  },
                   child: Text("Generate now", style: GoogleFonts.inter(color: Colors.white, fontSize: 14.sp),),
                 ),
               ),
