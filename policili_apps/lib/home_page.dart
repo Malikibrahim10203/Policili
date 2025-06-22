@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
+import 'package:policili_apps/controller/api_external_controller.dart';
 import 'package:policili_apps/controller/auth_controller.dart';
 import 'package:policili_apps/generate_page.dart';
 
@@ -11,6 +12,7 @@ class HomePage extends StatelessWidget {
   HomePage({super.key});
 
   final auth = Get.find<AuthController>();
+  final apiExternalController = Get.find<ApiExternalController>();
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +99,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   onPressed: (){
-                    Get.to(GeneratePage());
+                    apiExternalController.showGeneratePage();
                   },
                   child: Text("Generate now", style: GoogleFonts.inter(color: Colors.white, fontSize: 14.sp),),
                 ),

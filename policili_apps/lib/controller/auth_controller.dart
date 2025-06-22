@@ -2,11 +2,15 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:policili_apps/home_page.dart';
+import 'package:policili_apps/models/external_user.dart';
 import 'package:policili_apps/models/userapi_model.dart';
 import 'package:policili_apps/sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'api_external_controller.dart';
 
 class AuthController extends GetxController {
   final emailController = TextEditingController();
@@ -21,6 +25,8 @@ class AuthController extends GetxController {
   Rx<User?> firebaseUser = Rx<User?>(null);
   RxString signUpMessage = ''.obs;
   RxBool isLoading = false.obs;
+  final apiExternalController = Get.put(ApiExternalController());
+
 
   @override
   void onInit() {
@@ -43,10 +49,27 @@ class AuthController extends GetxController {
   void signIn() async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
+    final prefs = await SharedPreferences.getInstance();
+    final storage = FlutterSecureStorage();
+
+    await storage.write(key: "email", value: email);
+    await storage.write(key: "password", value: password);
+
     isLoading.value = true;
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       Get.snackbar("Success", "login berhasil");
+      apiExternalController.getTokenThinger();
+
+      try {
+        final user = FirebaseAuth.instance.currentUser;
+        apiExternalController.saveDataThinger(user, email);
+        String? jsonString = prefs.getString('data_sensor');
+       print("External Message: $jsonString");
+      } catch(e) {
+        print("Get data in Error: $e");
+      }
+
       Get.offAll(HomePage());
     } on FirebaseAuthException catch (e) {
       Get.snackbar("Error", e.message??'login gagal');
@@ -79,7 +102,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> signUp(String email, String password, String name, String device_id, String sensor_id, String username_thinger) async {
-    final user = UserapiModel(name: name, deviceId: device_id, sensorId: sensor_id, usernameThinger: username_thinger);
+    final user = UserapiModel(name: name, email: email, deviceId: device_id, sensorId: sensor_id, usernameThinger: username_thinger);
     isLoading.value = true;
     try {
       final credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
@@ -108,6 +131,12 @@ class AuthController extends GetxController {
   }
 
   Future<void> signOut() async {
+
+    final storage = FlutterSecureStorage();
+
+    await storage.delete(key: "email");
+    await storage.delete(key: "password");
+
     await _auth.signOut();
   }
 }

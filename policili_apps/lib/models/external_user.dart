@@ -1,11 +1,13 @@
-class UserapiModel {
+class ExternalUser {
+  int id;
   String name;
   String email;
   String deviceId;
   String sensorId;
   String usernameThinger;
 
-  UserapiModel({
+  ExternalUser({
+    required this.id,
     required this.name,
     required this.email,
     required this.deviceId,
@@ -13,7 +15,8 @@ class UserapiModel {
     required this.usernameThinger,
   });
 
-  factory UserapiModel.fromJson(Map<String, dynamic> json) => UserapiModel(
+  factory ExternalUser.fromJson(Map<String, dynamic> json) => ExternalUser(
+    id: json["id"],
     name: json["name"],
     email: json["email"],
     deviceId: json["device_id"],
@@ -22,6 +25,7 @@ class UserapiModel {
   );
 
   Map<String, dynamic> toJson() => {
+    "id": id,
     "name": name,
     "email": email,
     "device_id": deviceId,

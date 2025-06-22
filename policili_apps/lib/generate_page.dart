@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
+import 'package:policili_apps/controller/api_external_controller.dart';
 import 'package:policili_apps/home_page.dart';
 import 'package:policili_apps/widget/card_device.dart';
 
 class GeneratePage extends StatelessWidget {
   GeneratePage({super.key});
+
+  final ApiExternalController apiExternalController = Get.find<ApiExternalController>();
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +79,13 @@ class GeneratePage extends StatelessWidget {
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(20.w)
                                   ),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        "${apiExternalController.recommendationResult}"
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
@@ -85,19 +95,19 @@ class GeneratePage extends StatelessWidget {
                       SizedBox(
                         height: 30.h,
                       ),
-                      CardDevice(logo: "Mm", labelName: "Air Humidity", labelValue: "80", status: "Success",),
+                      CardDevice(logo: "Mm", labelName: "Air Humidity", labelValue: "${apiExternalController.suhu}", status: "Success",),
                       SizedBox(
                         height: 11.h,
                       ),
-                      CardDevice(logo: "Mm", labelName: "Air Humidity", labelValue: "80", status: "Success",),
+                      CardDevice(logo: "Mm", labelName: "Air Humidity", labelValue: "${apiExternalController.humidity}", status: "Success",),
                       SizedBox(
                         height: 11.h,
                       ),
-                      CardDevice(logo: "Mm", labelName: "Air Humidity", labelValue: "80", status: "Success",),
+                      CardDevice(logo: "Mm", labelName: "Air Humidity", labelValue: "${apiExternalController.soilMoisture}", status: "Success",),
                       SizedBox(
                         height: 11.h,
                       ),
-                      CardDevice(logo: "Mm", labelName: "Air Humidity", labelValue: "80", status: "Success",),
+                      CardDevice(logo: "Mm", labelName: "Air Humidity", labelValue: "${apiExternalController.ph}", status: "Success",),
                       SizedBox(
                         height: 11.h,
                       ),
