@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
 import 'package:policili_apps/controller/api_external_controller.dart';
 import 'package:policili_apps/controller/auth_controller.dart';
@@ -13,11 +15,11 @@ import 'package:firebase_core/firebase_core.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await initializeDateFormatting('id_ID', null);
   Get.put(AuthController());
   runApp(MyApp());
 }
 
-/// Root widget aplikasi
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 

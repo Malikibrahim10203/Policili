@@ -20,6 +20,20 @@ class AuthController extends GetxController {
   final deviceidController = TextEditingController();
   final usernameController = TextEditingController();
 
+  final controllers = [].obs;
+
+  void changeController() {
+    controllers.value = [
+      emailController,
+      usernameController,
+      emailController,
+      deviceidController,
+      sensoridController,
+      passwordController,
+      nameController
+    ];
+  }
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Rx<User?> firebaseUser = Rx<User?>(null);
@@ -27,6 +41,7 @@ class AuthController extends GetxController {
   RxBool isLoading = false.obs;
   final apiExternalController = Get.put(ApiExternalController());
 
+  RxBool access = false.obs;
 
   @override
   void onInit() {
@@ -39,10 +54,10 @@ class AuthController extends GetxController {
   bool get isSigned => firebaseUser.value != null;
 
   void _setInitialScreen(User? user) {
-    if(user == null) {
-      Get.offAll(SignIn());
-    } else {
+    if(user != null && access.value == true) {
       Get.offAll(HomePage());
+    } else {
+      Get.offAll(SignIn());
     }
   }
 
@@ -58,14 +73,19 @@ class AuthController extends GetxController {
     isLoading.value = true;
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      Get.snackbar("Success", "login berhasil");
-      apiExternalController.getTokenThinger();
+      Get.snackbar("Success", "login success");
 
       try {
         final user = FirebaseAuth.instance.currentUser;
-        apiExternalController.saveDataThinger(user, email);
+        await apiExternalController.saveDataThinger(user, email);
         String? jsonString = prefs.getString('data_sensor');
-       print("External Message: $jsonString");
+        await apiExternalController.getTokenThinger();
+        final savedAccessToken = await storage.read(key: 'access_token');
+        final savedRefreshToken = await storage.read(key: 'refresh_token');
+        access.value = true;
+        print("Access token: $savedAccessToken");
+        print("Refresh token: $savedRefreshToken");
+        print("External Message: $jsonString");
       } catch(e) {
         print("Get data in Error: $e");
       }
@@ -103,11 +123,13 @@ class AuthController extends GetxController {
 
   Future<void> signUp(String email, String password, String name, String device_id, String sensor_id, String username_thinger) async {
     final user = UserapiModel(name: name, email: email, deviceId: device_id, sensorId: sensor_id, usernameThinger: username_thinger);
+    access.value = false;
     isLoading.value = true;
     try {
       final credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      Get.snackbar('Success', 'UID: ${credential.user?.uid}');
+      signUpMessage.value = 'UID: ${credential.user?.uid}';
       await sendUserRestApi(user);
+
     } on FirebaseAuthException catch(e) {
       if(e.code == 'weak-password') {
         signUpMessage.value = 'Password lemah';
@@ -119,6 +141,7 @@ class AuthController extends GetxController {
     } catch(e) {
       signUpMessage.value = 'Kesalahan tidak terduga:$e';
     } finally {
+      Get.snackbar('Alert', signUpMessage.value);
       print(signUpMessage.value);
       emailController.clear();
       passwordController.clear();
@@ -130,12 +153,15 @@ class AuthController extends GetxController {
     }
   }
 
+
   Future<void> signOut() async {
 
     final storage = FlutterSecureStorage();
 
     await storage.delete(key: "email");
     await storage.delete(key: "password");
+
+    access.value = false;
 
     await _auth.signOut();
   }

@@ -151,7 +151,11 @@ class SignIn extends StatelessWidget {
                             width: 1.sw,
                             child: ElevatedButton(
                               onPressed: () {
-                                authController.signIn();
+                                if (authController.controllers.every((c)=> c.text.trim().isNotEmpty)) {
+                                  authController.signIn();
+                                } else {
+
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(

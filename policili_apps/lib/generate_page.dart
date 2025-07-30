@@ -2,7 +2,10 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mesh_gradient/mesh_gradient.dart';
+import 'package:policili_apps/change_profile.dart';
 import 'package:policili_apps/controller/api_external_controller.dart';
 import 'package:policili_apps/home_page.dart';
 import 'package:policili_apps/widget/card_device.dart';
@@ -15,6 +18,7 @@ class GeneratePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       body: Stack(
         children: [
           Stack(
@@ -58,78 +62,208 @@ class GeneratePage extends StatelessWidget {
                           Container(
                             width: double.infinity,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(bottomRight: Radius.circular(20.w), bottomLeft: Radius.circular(20.w)),
+                              borderRadius: BorderRadius.only(bottomRight: Radius.circular(15.w), bottomLeft: Radius.circular(15.w)),
                               image: DecorationImage(
                                 image: AssetImage("assets/img/bg_card.png"),
                                 fit: BoxFit.cover
                               ),
                             ),
-                            height: 0.75.sw,
+                            height: 0.95.sw,
                           ),
                           Column(
                             children: [
                               SizedBox(
-                                height: 0.65.sw,
+                                height: 0.1.sw,
+                              ),
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.all(20),
+                                    child: GestureDetector(
+                                      onTap: (){
+                                        apiExternalController.isLoading.value = true;
+                                        Future.delayed(Duration(seconds: 1), () {
+                                          apiExternalController.isLoading.value = false;
+                                          Get.off(HomePage());
+                                        },);
+                                      },
+                                      child: Container(
+                                        width: 0.13.sw,
+                                        height: 0.13.sw,
+                                        decoration: BoxDecoration(
+                                            color: Color(0xffD9D9D9),
+                                            borderRadius: BorderRadius.circular(10.w)
+                                        ),
+                                        child: Icon(Icons.arrow_back),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Center(
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 0.2.sw,
+                                ),
+                                Stack(
+                                  children: [
+                                    Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 0.17.sh,
+                                        ),
+                                        Container(
+                                          width: 200.w,
+                                          height: 20.h,
+                                          decoration: BoxDecoration(
+                                            // color: Colors.black.withOpacity(0.6),
+                                            borderRadius: BorderRadius.circular(10.w),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                  color: Colors.black.withOpacity(0.8),
+                                                  blurRadius: 50
+                                              )
+                                            ]
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Obx(() => Image.network(
+                                      "https://www.meep-lab.cloud/images/${apiExternalController.dataTanaman.value?.url}",
+                                      width: 200.w,
+                                    ),),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              SizedBox(
+                                height: 0.75.sw,
+                              ),
+                              Column(
+                                children: [
+                                  Obx(() => Text(
+                                    "${apiExternalController.dataTanaman.value?.name}",
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 18.sp,
+                                      color: Colors.white,
+                                    ),
+                                  ),),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 0.05.sw,
                               ),
                               Center(
                                 child: Container(
                                   width: 0.9.sw,
-                                  height: 0.25.sw,
+                                  constraints: BoxConstraints(
+                                    minHeight: 0.2.sw,
+                                  ),
                                   decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(20.w)
                                   ),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        "${apiExternalController.recommendationResult}"
-                                      ),
-                                    ],
+                                  child: Padding(
+                                    padding: EdgeInsets.only(top: 10.w, bottom: 10.w, left: 25.w, right: 25.w),
+                                    child: Row(
+                                      children: [
+                                        Image.asset("assets/img/search.png", width: 35.w,),
+                                        SizedBox(width: 15.w,),
+                                        Flexible(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Manfaat",
+                                                style: GoogleFonts.roboto(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 13.5.sp
+                                                ),
+                                              ),
+                                              Obx(() => Text(
+                                                "${apiExternalController.dataTanaman.value?.kelebihan}",
+                                                style: GoogleFonts.roboto(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 13.sp
+                                                ),
+                                              ),)
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
+                                )
                               ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                       SizedBox(
                         height: 30.h,
                       ),
-                      CardDevice(logo: "Mm", labelName: "Air Humidity", labelValue: "${apiExternalController.suhu}", status: "Success",),
+                      Obx(() => CardDevice(logo: "Mm", labelName: "Temprature", labelValue: "${apiExternalController.suhu}", status: "Success",),),
                       SizedBox(
                         height: 11.h,
                       ),
-                      CardDevice(logo: "Mm", labelName: "Air Humidity", labelValue: "${apiExternalController.humidity}", status: "Success",),
+                      Obx(() => CardDevice(logo: "Mm", labelName: "Air Humidity", labelValue: "${apiExternalController.humidity}", status: "Success",),),
                       SizedBox(
                         height: 11.h,
                       ),
-                      CardDevice(logo: "Mm", labelName: "Air Humidity", labelValue: "${apiExternalController.soilMoisture}", status: "Success",),
+                      Obx(() => CardDevice(logo: "Mm", labelName: "Soil Humidity", labelValue: "${apiExternalController.soilMoisture}", status: "Success",),),
                       SizedBox(
                         height: 11.h,
                       ),
-                      CardDevice(logo: "Mm", labelName: "Air Humidity", labelValue: "${apiExternalController.ph}", status: "Success",),
+                      Obx(() => CardDevice(logo: "Mm", labelName: "PH", labelValue: "${apiExternalController.ph}", status: "Success",),),
                       SizedBox(
                         height: 11.h,
                       ),
                     ],
                   ),
                 ),
-              )
+              ),
             ],
+          ),
+          Obx(() => apiExternalController.isRecommendationLoading.value || apiExternalController.isLoading.value?
+          Container(
+            color: Colors.black.withOpacity(0.5),
+            child: Center(
+              child: LoadingAnimationWidget.fourRotatingDots(color: Colors.red, size: 50.w),
+            ),
+          ): SizedBox.shrink(),
           ),
         ],
       ),
       bottomNavigationBar: CurvedNavigationBar(
         index: 1,
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: Colors.transparent,
+        buttonBackgroundColor: Color(0xffFD9A37),
+        height: 60.w,
         items: [
-          Icon(Icons.home, size: 25.w),
-          Icon(Icons.refresh, size: 25.w),
-          Icon(Icons.person, size: 25.w),
+          Icon(Icons.home, size: 25.w, color: Color(0xff6A0606),),
+          Icon(Icons.refresh, size: 25.w, color: Colors.white,),
+          Icon(Icons.settings_suggest_outlined, color: Colors.grey, size: 25.w),
         ],
         onTap: (index) {
           if (index == 0) {
-            Get.off(HomePage());
+            index = 1;
+            apiExternalController.isLoading.value = true;
+            Future.delayed(Duration(seconds: 1), () {
+              apiExternalController.isLoading.value = false;
+              Get.off(HomePage());
+            },);
+          } else if (index == 1) {
+            index == 1;
+            apiExternalController.refhreshGeneretePage();
+          } else if (index == 2) {
+            index == 1;
+            apiExternalController.goToChangeProfile();
           }
         },
       ),

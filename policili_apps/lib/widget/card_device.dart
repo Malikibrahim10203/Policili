@@ -67,6 +67,12 @@ class CardDevice extends StatelessWidget {
             color: Colors.red,
             borderRadius: BorderRadius.circular(15.w)
           ),
+          child: Padding(
+            padding: EdgeInsets.all(15.w),
+            child: Image.asset(
+              "assets/img/iot.png",
+            ),
+          ),
         ),
       ],
     );

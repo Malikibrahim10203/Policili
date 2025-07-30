@@ -86,7 +86,7 @@ class SignUp extends StatelessWidget {
                               child: Column(
                                 children: [
                                   Text(
-                                    "Log in to your account",
+                                    "Sign Up to create your account",
                                     style: TextStyle(
                                         fontSize: width*0.05,
                                         fontWeight: FontWeight.w500
@@ -96,7 +96,7 @@ class SignUp extends StatelessWidget {
                                     height: width * 0.01,
                                   ),
                                   Text(
-                                    "Welcome back! Please enter your details.",
+                                    "Welcome! Please enter your details.",
                                   ),
                                 ],
                               ),
@@ -136,7 +136,18 @@ class SignUp extends StatelessWidget {
                               width: width*1,
                               child: ElevatedButton(
                                 onPressed: (){
-                                  authController.signUp(authController.emailController.text, authController.passwordController.text, authController.nameController.text, authController.deviceidController.text, authController.sensoridController.text, authController.usernameController.text);
+                                  final controllers = [
+                                    authController.emailController,
+                                    authController.usernameController,
+                                    authController.emailController,
+                                    authController.deviceidController,
+                                    authController.sensoridController,
+                                    authController.passwordController,
+                                    authController.nameController
+                                  ];
+                                  if (controllers.every((c)=> c.text.trim().isNotEmpty)) {
+                                    authController.signUp(authController.emailController.text, authController.passwordController.text, authController.nameController.text, authController.deviceidController.text, authController.sensoridController.text, authController.usernameController.text);
+                                  }
                                 },
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
