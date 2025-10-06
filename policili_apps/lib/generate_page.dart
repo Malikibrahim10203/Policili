@@ -80,9 +80,11 @@ class GeneratePage extends StatelessWidget {
                                   Padding(
                                     padding: EdgeInsets.all(20),
                                     child: GestureDetector(
-                                      onTap: (){
+                                      onTap: () {
                                         apiExternalController.isLoading.value = true;
                                         Future.delayed(Duration(seconds: 1), () {
+                                          apiExternalController.historyPredict.value.clear();
+                                          apiExternalController.listDataTanaman.value.clear();
                                           apiExternalController.isLoading.value = false;
                                           Get.off(HomePage());
                                         },);
@@ -133,6 +135,7 @@ class GeneratePage extends StatelessWidget {
                                     ),
                                     Obx(() => Image.network(
                                       "https://www.meep-lab.cloud/images/${apiExternalController.dataTanaman.value?.url}",
+                                      // "https://www.meep-lab.cloud/images/${apiExternalController.listDataTanaman[0].value?.url}",
                                       width: 200.w,
                                     ),),
                                   ],
@@ -145,17 +148,15 @@ class GeneratePage extends StatelessWidget {
                               SizedBox(
                                 height: 0.75.sw,
                               ),
-                              Column(
-                                children: [
-                                  Obx(() => Text(
-                                    "${apiExternalController.dataTanaman.value?.name}",
-                                    style: GoogleFonts.roboto(
-                                      fontSize: 18.sp,
-                                      color: Colors.white,
-                                    ),
-                                  ),),
-                                ],
-                              ),
+                              Obx(() => Text(
+                                "${apiExternalController.dataTanaman.value?.name}",
+                                // "${apiExternalController.listDataTanaman[0].value?.name}",
+                                style: GoogleFonts.roboto(
+                                  fontSize: 18.sp,
+                                  color: Colors.white,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),),
                               SizedBox(
                                 height: 0.05.sw,
                               ),
@@ -188,6 +189,7 @@ class GeneratePage extends StatelessWidget {
                                               ),
                                               Obx(() => Text(
                                                 "${apiExternalController.dataTanaman.value?.kelebihan}",
+                                                // "${apiExternalController.listDataTanaman[0].value?.kelebihan}",
                                                 style: GoogleFonts.roboto(
                                                   fontWeight: FontWeight.w400,
                                                   fontSize: 13.sp
@@ -206,23 +208,80 @@ class GeneratePage extends StatelessWidget {
                         ],
                       ),
                       SizedBox(
-                        height: 30.h,
-                      ),
-                      Obx(() => CardDevice(logo: "Mm", labelName: "Temprature", labelValue: "${apiExternalController.suhu}", status: "Success",),),
-                      SizedBox(
                         height: 11.h,
                       ),
-                      Obx(() => CardDevice(logo: "Mm", labelName: "Air Humidity", labelValue: "${apiExternalController.humidity}", status: "Success",),),
-                      SizedBox(
-                        height: 11.h,
-                      ),
-                      Obx(() => CardDevice(logo: "Mm", labelName: "Soil Humidity", labelValue: "${apiExternalController.soilMoisture}", status: "Success",),),
-                      SizedBox(
-                        height: 11.h,
-                      ),
-                      Obx(() => CardDevice(logo: "Mm", labelName: "PH", labelValue: "${apiExternalController.ph}", status: "Success",),),
-                      SizedBox(
-                        height: 11.h,
+                      Container(
+                        width: 0.9.sw,
+                        height: 0.9.sw,
+                        child: ListView(
+                          padding: EdgeInsets.zero,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(top: 10.w, bottom: 10.w, left: 25.w, right: 25.w),
+                              width: 0.9.sw,
+                              constraints: BoxConstraints(
+                                minHeight: 0.21.sw,
+                              ),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10.w)
+                              ),
+                              child: Row(
+                                children: [
+                                  Image.asset("assets/img/list.png", width: 35.w,),
+                                  SizedBox(width: 15.w,),
+                                  Flexible(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Alternatif",
+                                          style: GoogleFonts.roboto(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 13.5.sp
+                                          ),
+                                        ),
+                                        Text(
+                                          "${apiExternalController.listDataTanaman.value[0]}",
+                                          style: GoogleFonts.roboto(
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 13.sp
+                                          ),
+                                        ),
+                                        Text(
+                                          "${apiExternalController.listDataTanaman.value[1]}",
+                                          style: GoogleFonts.roboto(
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 13.sp
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 11.h,
+                            ),
+                            CardDevice(logo: "Mm", labelName: "Temprature", labelValue: "30", status: "Success",),
+                            SizedBox(
+                              height: 11.h,
+                            ),
+                            CardDevice(logo: "Mm", labelName: "Air Humidity", labelValue: "0.61", status: "Success",),
+                            SizedBox(
+                              height: 11.h,
+                            ),
+                            Obx(() => CardDevice(logo: "Mm", labelName: "Soil Humidity", labelValue: "${apiExternalController.soilMoisture}", status: "Success",),),
+                            SizedBox(
+                              height: 11.h,
+                            ),
+                            Obx(() => CardDevice(logo: "Mm", labelName: "PH", labelValue: "${apiExternalController.ph}", status: "Success",),),
+                            SizedBox(
+                              height: 11.h,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

@@ -25,9 +25,17 @@ class ApiExternalController extends GetxController {
   RxString soilMoisture = ''.obs;
   RxString ph = ''.obs;
 
+  // final phdum = "5";
+  // final kelu = "0.59";
+  // final kelta = "0.72";
+  // final suhdum = "30";
+
   RxString recommendationResult = ''.obs;
 
   final dataTanaman = Rxn<TanamanModel>();
+  final listDataTanaman = [].obs;
+
+  final message = "".obs;
 
   final nameThinger = TextEditingController();
   final deviceThinger = TextEditingController();
@@ -193,10 +201,13 @@ class ApiExternalController extends GetxController {
         List partOfResponse = dataResponse.split('#');
 
         suhu.value = partOfResponse[1];
-        humidity.value = partOfResponse[0];
-        soilMoisture.value = partOfResponse[2];
+        final tempHumidity = double.parse(partOfResponse[0]) / 100;
+        humidity.value = tempHumidity.toStringAsFixed(2);
+        final tempSoil = double.parse(partOfResponse[2]) / 100;
+        soilMoisture.value = tempSoil.toStringAsFixed(2);
         ph.value = partOfResponse[3];
 
+        print("ini humiditi : ${tempHumidity}");
         print(response.statusCode);
         print(responseBody);
         print(responseBody['value']);
@@ -247,30 +258,42 @@ class ApiExternalController extends GetxController {
     try{
       final storage = FlutterSecureStorage();
       final email = await storage.read(key: "email");
-      final url = Uri.parse("https://neusisco-TrainSpace.hf.space/predict");
+      final url = Uri.parse("https://neusisco-ModelRFv2.hf.space/predict");
       final response = await http.post(
         url,
         body: jsonEncode({
-          "suhu": suhu.value,
-          "kelembaban_udara": humidity.value,
+          "suhu": "30",
+          "kelembaban_udara": "0.61",
           "kelembaban_tanah": soilMoisture.value,
           "ph": ph.value
-        })
+        }),
       );
+      final responseBody = jsonDecode(response.body);
       if(response.statusCode == 200 || response.statusCode == 201) {
-        final responseBody = jsonDecode(response.body);
-        recommendationResult.value = responseBody['rekomendasi_tanaman'];
         print(responseBody['rekomendasi_tanaman']);
-        await getDataTanaman(responseBody['rekomendasi_tanaman']);
-        isRecommendationLoading.value = false;
-        await addHistoryPredict(email, soilMoisture.value, humidity.value, ph.value, suhu.value, responseBody['rekomendasi_tanaman']);
+
+        await getDataTanaman(responseBody['rekomendasi_tanaman'][0]);
+
+        listDataTanaman.value.insert(0, responseBody['rekomendasi_tanaman'][1]);
+        listDataTanaman.value.insert(1, responseBody['rekomendasi_tanaman'][2]);
+
+        // await getDataTanaman(responseBody['rekomendasi_tanaman'], 0);
+        await addHistoryPredict(email, soilMoisture.value, "0.61", ph.value, "30", responseBody['rekomendasi_tanaman'][0]);
         Get.to(GeneratePage());
       } else {
-        Get.snackbar("Failed", "Failed to get recommendation: ${response.body}");
+        print(responseBody);
+        if(response.statusCode == 422) {
+          message.value = responseBody['detail'];
+          Get.snackbar("Failed", "$message");
+        } else {
+          Get.snackbar("Failed", "Failed to get recommendation: ${response.body}");
+        }
         print("Failed to get recommendation: ${response.body}");
       }
     }catch(e){
       print('Error get recommendation at: $e');
+    } finally {
+      isRecommendationLoading.value = false;
     }
   }
 
@@ -293,6 +316,7 @@ class ApiExternalController extends GetxController {
 
         if (responseBody is List && responseBody.isNotEmpty) {
           dataTanaman.value = TanamanModel.fromJson(responseBody[0]);
+          // listDataTanaman.add(Rxn(TanamanModel.fromJson(responseBody[0])));
           print("Success get one data tanaman");
         } else {
           print("Data tanaman kosong atau format tidak sesuai.");

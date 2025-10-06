@@ -89,7 +89,6 @@ class AuthController extends GetxController {
       } catch(e) {
         print("Get data in Error: $e");
       }
-
       Get.offAll(HomePage());
     } on FirebaseAuthException catch (e) {
       Get.snackbar("Error", e.message??'login gagal');
